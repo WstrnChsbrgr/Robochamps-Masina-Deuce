@@ -9,6 +9,8 @@ void setup() {
   delay(2000);
   pinMode(LED_PIN, OUTPUT);
   init_motors();
+  delay(5000);
+  Serial.println("Ahi va weyes");
 }
 
 void loop() {
@@ -19,11 +21,11 @@ void loop() {
   digitalWrite(LED_PIN, LOW);
   delay(500);
   contador++;
-  forward(150);
+  forward(100);
   delay(2000);
   stop();
   delay(1000);
-  turn(150);
+  turn(100);
   delay(2000);
   stop();
   delay(1000);
