@@ -14,9 +14,7 @@ void init_motors() {
 }
 
 void motor_move(int motor, int speed) {
-
-  int pinIn1, pinIn2, pinPwm, canal;
-
+  int pinIn1, pinIn2, pinPwm;
   if (motor == 0) {
     pinIn1 = MOTORL_IN1_PIN;
     pinIn2 = MOTORL_IN2_PIN;

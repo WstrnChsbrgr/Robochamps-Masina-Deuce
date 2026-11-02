@@ -1,19 +1,30 @@
 #include <Arduino.h>
+#include "pines.h"
+#include "motores.h"
 
-const int PIN_LED = 4;
 int contador = 0;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(PIN_LED, OUTPUT);
+  delay(2000);
+  pinMode(LED_PIN, OUTPUT);
+  init_motors();
 }
 
 void loop() {
   Serial.print("Ciclo número ");
   Serial.println(contador);
-  digitalWrite(PIN_LED, HIGH);
+  digitalWrite(LED_PIN, HIGH);
   delay(500);
-  digitalWrite(PIN_LED, LOW);
+  digitalWrite(LED_PIN, LOW);
   delay(500);
-  contador++;   
+  contador++;
+  forward(150);
+  delay(2000);
+  stop();
+  delay(1000);
+  turn(150);
+  delay(2000);
+  stop();
+  delay(1000);
 }

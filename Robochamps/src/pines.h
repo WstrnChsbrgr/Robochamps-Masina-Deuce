@@ -2,7 +2,7 @@
 
 const int MOTORR_IN1_PIN = 5;
 const int MOTORR_IN2_PIN = 6;
-const int MOTORR_PWM_PIN = 3;
+const int MOTORR_PWM_PIN = 17;
 const int MOTORL_IN1_PIN = 14;
 const int MOTORL_IN2_PIN = 15;
 const int MOTORL_PWM_PIN = 16;
