@@ -14,3 +14,5 @@ const int S2_PIN = 11;
 const int S3_PIN = 12;
 const int OUT_PIN = 13;
 const int LED_PIN = 4;
+const int SDA_PIN = 1;
+const int SCL_PIN = 2;

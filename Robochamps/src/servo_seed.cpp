@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
-#include "servo_semilla.h"
+#include "servo_seed.h"
 #include "pines.h"
 
 const int ANGLE_OPEN  = 90;
