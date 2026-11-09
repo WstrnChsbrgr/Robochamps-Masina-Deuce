@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include "i2c_scan.h"
+#include "scanner.h"
 #include "pines.h"
 
 void scan_i2c() {

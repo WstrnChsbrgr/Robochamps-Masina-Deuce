@@ -7,7 +7,7 @@
 
 WebServer servidor(80);
 
-const char* NOMBRE_RED = "Mercurio";        
+const char* NOMBRE_RED = "MasinaDeuce";        
 const char* CLAVE_RED  = "Autode12";
 
 const char PAGINA[] = R"rawliteral(
@@ -103,18 +103,16 @@ void init_controller() {
     pinMode(LED_PIN, OUTPUT);
     WiFi.softAP(NOMBRE_RED, CLAVE_RED);
     servidor.on("/", showpage);
-    servidor.on("/on", LedOn);
-    servidor.on("/off", LedOff);
-    servidor.begin();
     Serial.println(WiFi.softAPIP());
     servidor.on("/forward", goForward);
     servidor.on("/back", goBack);
     servidor.on("/left", goLeft);
     servidor.on("/right", goRight);
     servidor.on("/stop", doStop);
+    servidor.begin();
 }
 
-void controlattend() {
+void attend_controller() {
   servidor.handleClient();
   if (moving && millis() - lastCommand > WATCHDOG_MS) {
     stop();

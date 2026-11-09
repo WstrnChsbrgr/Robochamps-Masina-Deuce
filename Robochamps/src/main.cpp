@@ -9,6 +9,7 @@
 #define MODE_WIFI    2
 #define MODE_I2C     3
 #define MODE_MOTORS  4
+#define MODE_SERVO   5
 #define TEST_MODE MODE_MOTORS
 int channel_red, channel_green, channel_blue;
 
@@ -22,15 +23,13 @@ void setup() {
   #endif
   init_controller();
   pinMode(LED_PIN, OUTPUT);
-  init_motors();
   delay(5000);
   Serial.println("Ahi va weyes");
-  Color_init();
-  init_controller();
 }
 
 void loop() {
   #if TEST_MODE == MODE_COLOR
+  Color_init();
   channel_red = Channel_read(LOW, LOW);
   channel_green = Channel_read(HIGH, HIGH);
   channel_blue = Channel_read(LOW, HIGH);
@@ -40,10 +39,15 @@ void loop() {
   Serial.print(channel_green);
   Serial.print(" B: ");
   Serial.println(channel_blue);
+  int detected = detect_color();
+  Serial.print("  -> color: ");
+  Serial.println(detected);
   delay(500);
   #elif TEST_MODE == MODE_WIFI
-  atenderControl();
+  attend_controller();
+  init_controller();
   #elif TEST_MODE == MODE_MOTORS
+    init_controller();
     Serial.print("Ciclo número ");
     Serial.println(contador);
     digitalWrite(LED_PIN, HIGH);
@@ -59,5 +63,12 @@ void loop() {
     delay(2000);
     stop();
     delay(1000);  
+  
+#elif TEST_MODE == MODE_SERVO
+    init_gripper();
+    grab_seed();
+    delay(2000);
+    release_seed();
+    delay(2000);
   #endif
 }
