@@ -51,8 +51,9 @@ const int SPEED_DRIVE = 100;
 const int SPEED_TURN  = 100;
 const unsigned long WATCHDOG_MS = 300;
 
-unsigned long lastCommand = 0;   // time of the last command received
+unsigned long lastCommand = 0;
 bool moving = false;
+bool is_moving() { return moving; }
 
 void sendOk() {
   servidor.send(200, "text/plain", "ok");
