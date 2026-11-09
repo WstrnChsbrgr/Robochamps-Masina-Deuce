@@ -3,7 +3,7 @@
 #include "pines.h"
 #include "config.h"
 
-void Color_init() {
+void color_init() {
   pinMode(S0_PIN, OUTPUT);
   pinMode(S1_PIN, OUTPUT);
   pinMode(S2_PIN, OUTPUT);

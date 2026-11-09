@@ -4,6 +4,7 @@
 #include "control.h"
 #include "pines.h"
 #include "motores.h"
+#include "servo_seed.h"
 
 WebServer servidor(80);
 
@@ -22,6 +23,7 @@ const char PAGINA[] = R"rawliteral(
 <button id="l">Left</button><button id="r">Right</button><br>
 <button id="b">Back</button><br>
 <button id="s">STOP</button>
+<button id="g">Grab</button><button id="o">Release</button>
 <script>
 let timer = null;
 function send(path){ fetch(path).catch(()=>{}); }
@@ -38,6 +40,8 @@ function hold(id, path){
   el.addEventListener('pointercancel', up);
   el.addEventListener('pointerleave', up);
 }
+document.getElementById('g').addEventListener('pointerdown', () => send('/grab'));
+document.getElementById('o').addEventListener('pointerdown', () => send('/release'));
 hold('f','/forward'); hold('l','/left'); hold('r','/right'); hold('b','/back');
 document.getElementById('s').addEventListener('pointerdown', () => send('/stop'));
 </script></body></html>
@@ -84,6 +88,16 @@ void doStop() {
   sendOk();
 }
 
+void doGrab() {
+  grab_seed();
+  sendOk();
+}
+
+void doRelease() {
+  release_seed();
+  sendOk();
+}
+
 void showpage() {
   servidor.send(200, "text/html", PAGINA);
 }
@@ -109,6 +123,8 @@ void init_controller() {
     servidor.on("/left", goLeft);
     servidor.on("/right", goRight);
     servidor.on("/stop", doStop);
+    servidor.on("/grab", doGrab);
+    servidor.on("/release", doRelease);
     servidor.begin();
 }
 
