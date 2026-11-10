@@ -19,49 +19,18 @@ int contador = 0;
 
 void setup() {
   Serial.begin(115200);
-  delay(2000);
-    #if TEST_MODE == MODE_I2C
-    scan_i2c();
-  #endif
-  init_controller();
-  init_motors();
-  color_init();
-  init_gripper();
-  init_indicador();
-  pinMode(LED_PIN, OUTPUT);
-  delay(5000);
-  Serial.println("Ahi va weyes");
-}
-
-/* void setup() {
-  Serial.begin(115200);
-  delay(2000);
-  Serial.println("1 serial ok");
-
+  delay(4000);
   #if TEST_MODE == MODE_I2C
     scan_i2c();
-    Serial.println("1b scan ok");
   #endif
-
   init_controller();
-  Serial.println("2 controller ok");
-
   init_motors();
-  Serial.println("3 motors ok");
-
   color_init();
-  Serial.println("4 color ok");
-
   init_gripper();
-  Serial.println("5 gripper ok");
-
   init_indicador();
-  Serial.println("6 indicator ok");
-
   pinMode(LED_PIN, OUTPUT);
   delay(5000);
-  Serial.println("Ahi va weyes");
-} */
+}
 
 void loop() {
   #if TEST_MODE == MODE_COLOR
