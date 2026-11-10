@@ -3,6 +3,11 @@
 #include "pines.h"
 #include "config.h"
 
+ColorRef refs[5];
+bool filled[5] = { false, false, false, false, false };
+int maxDistance = 0;
+bool calibrated = false;
+
 void color_init() {
   pinMode(S0_PIN, OUTPUT);
   pinMode(S1_PIN, OUTPUT);
@@ -45,14 +50,44 @@ int detect_color() {
   int bestDistance = 32000;
 
   for (int i = 0; i < 5; i++) {
-    int distance = abs(r - REFS[i].r) + abs(g - REFS[i].g) + abs(b - REFS[i].b);
+    int distance = abs(r - refs[i].r) + abs(g - refs[i].g) + abs(b - refs [i].b);
     if (distance < bestDistance) {
       bestDistance = distance;
       best = i;
     }
   }
-  if (bestDistance > MAX_DISTANCE) {
+  if (bestDistance > maxDistance || !calibrated) {
     return COLOR_NONE;
   }
   return best;
+}
+
+
+void calibrate_color(int id) {
+  int r = read_average(LOW, LOW);
+  int g = read_average(HIGH, HIGH);
+  int b = read_average(LOW, HIGH);
+
+  if (r == 0 || g == 0 || b == 0) {
+    return;
+  }
+
+  refs[id].r = r;
+  refs[id].g = g;
+  refs[id].b = b;
+  filled[id] = true;
+
+  if (filled[0] && filled[1] && filled[2] && filled[3] && filled[4]) {
+    int smallest = 32000;
+    for (int i = 0; i < 5; i++) {
+      for (int j = i + 1; j < 5; j++) {
+        int distance = abs(refs[i].r - refs[j].r) + abs(refs[i].g - refs[j].g) + abs(refs[i].b - refs[j].b);
+        if (distance < smallest) {
+          smallest = distance;
+        }
+      }
+    }
+    maxDistance = smallest / 2;
+    calibrated = true;
+  }
 }
