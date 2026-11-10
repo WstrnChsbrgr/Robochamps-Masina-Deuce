@@ -5,12 +5,14 @@
 #include "control.h"
 #include "scanner.h"
 #include "servo_seed.h"
+#include "indicador.h"
 #define MODE_COLOR   1
 #define MODE_WIFI    2
 #define MODE_I2C     3
 #define MODE_MOTORS  4
 #define MODE_SERVO   5
-#define TEST_MODE MODE_MOTORS
+#define MODE_DRIVE   6
+#define TEST_MODE MODE_I2C
 int channel_red, channel_green, channel_blue;
 
 int contador = 0;
@@ -25,6 +27,7 @@ void setup() {
   init_motors();
   color_init();
   init_gripper();
+  init_indicador();
   pinMode(LED_PIN, OUTPUT);
   delay(5000);
   Serial.println("Ahi va weyes");
@@ -69,5 +72,8 @@ void loop() {
     delay(2000);
     release_seed();
     delay(2000);
+  #elif TEST_MODE == MODE_DRIVE
+    attend_controller();
+    update_indicador();
   #endif
 }
