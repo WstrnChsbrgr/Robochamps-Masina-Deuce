@@ -4,6 +4,7 @@
 #include "config.h"
 #include <Preferences.h>
 
+void color_load();
 ColorRef refs[5];
 bool filled[5] = { false, false, false, false, false };
 int maxDistance = 0;
@@ -96,15 +97,21 @@ void color_load() {
   }
   colorPrefs.end();
   update_max_distance();
+  color_init();
 }
 
-void calibrate_color(int id) {
+bool calibrate_color(int id) {
   int r = read_average(LOW, LOW);
   int g = read_average(HIGH, HIGH);
   int b = read_average(LOW, HIGH);
+  void read_rgb(int* r, int* g, int* b) {
+  *r = read_average(LOW, LOW);
+  *g = read_average(HIGH, HIGH);
+  *b = read_average(LOW, HIGH);
+}
 
   if (r == 0 || g == 0 || b == 0) {
-    return;
+    return false;
   }
 
   refs[id].r = r;
@@ -114,4 +121,5 @@ void calibrate_color(int id) {
 
   update_max_distance();
   color_save();
+  return true;
 }

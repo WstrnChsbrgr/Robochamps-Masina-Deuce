@@ -20,6 +20,7 @@ int contador = 0;
 
 void setup() {
   Serial.begin(115200);
+  settings_load();
     #if TEST_MODE != MODE_DRIVE
     delay(4000);
   #endif  
@@ -32,7 +33,6 @@ void setup() {
   init_gripper();
   init_indicador();
   pinMode(LED_PIN, OUTPUT);
-  delay(5000);
 }
 
 void loop() {
