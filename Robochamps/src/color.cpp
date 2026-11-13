@@ -100,15 +100,17 @@ void color_load() {
   color_init();
 }
 
-bool calibrate_color(int id) {
-  int r = read_average(LOW, LOW);
-  int g = read_average(HIGH, HIGH);
-  int b = read_average(LOW, HIGH);
-  void read_rgb(int* r, int* g, int* b) {
+void read_rgb(int* r, int* g, int* b) {
   *r = read_average(LOW, LOW);
   *g = read_average(HIGH, HIGH);
   *b = read_average(LOW, HIGH);
 }
+
+bool calibrate_color(int id) {
+  int r = read_average(LOW, LOW);
+  int g = read_average(HIGH, HIGH);
+  int b = read_average(LOW, HIGH);
+
 
   if (r == 0 || g == 0 || b == 0) {
     return false;
