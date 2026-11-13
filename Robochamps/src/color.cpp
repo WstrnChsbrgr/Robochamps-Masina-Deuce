@@ -2,6 +2,7 @@
 #include "color.h"
 #include "pines.h"
 #include "config.h"
+#include <Preferences.h>
 
 ColorRef refs[5];
 bool filled[5] = { false, false, false, false, false };
@@ -62,6 +63,40 @@ int detect_color() {
   return best;
 }
 
+void update_max_distance() {
+  for (int i = 0; i < 5; i++) {
+    if (!filled[i]) { calibrated = false; return; }
+  }
+  int smallest = 32000;
+  for (int i = 0; i < 5; i++) {
+    for (int j = i + 1; j < 5; j++) {
+      int d = abs(refs[i].r - refs[j].r) + abs(refs[i].g - refs[j].g) + abs(refs[i].b - refs[j].b);
+      if (d < smallest) smallest = d;
+    }
+  }
+  maxDistance = smallest / 2;
+  calibrated = true;
+}
+
+Preferences colorPrefs;
+
+void color_save() {
+  colorPrefs.begin("colors", false);
+  colorPrefs.putBytes("refs", refs, sizeof(refs));
+  colorPrefs.putBytes("filled", filled, sizeof(filled));
+  colorPrefs.end();
+}
+
+void color_load() {
+  colorPrefs.begin("colors", false);
+  if (colorPrefs.getBytesLength("refs") == sizeof(refs) &&
+      colorPrefs.getBytesLength("filled") == sizeof(filled)) {
+    colorPrefs.getBytes("refs", refs, sizeof(refs));
+    colorPrefs.getBytes("filled", filled, sizeof(filled));
+  }
+  colorPrefs.end();
+  update_max_distance();
+}
 
 void calibrate_color(int id) {
   int r = read_average(LOW, LOW);
@@ -77,17 +112,6 @@ void calibrate_color(int id) {
   refs[id].b = b;
   filled[id] = true;
 
-  if (filled[0] && filled[1] && filled[2] && filled[3] && filled[4]) {
-    int smallest = 32000;
-    for (int i = 0; i < 5; i++) {
-      for (int j = i + 1; j < 5; j++) {
-        int distance = abs(refs[i].r - refs[j].r) + abs(refs[i].g - refs[j].g) + abs(refs[i].b - refs[j].b);
-        if (distance < smallest) {
-          smallest = distance;
-        }
-      }
-    }
-    maxDistance = smallest / 2;
-    calibrated = true;
-  }
+  update_max_distance();
+  color_save();
 }

@@ -6,6 +6,7 @@
 #include "scanner.h"
 #include "servo_seed.h"
 #include "indicador.h"
+#include "settings.h"
 #define MODE_COLOR   1
 #define MODE_WIFI    2
 #define MODE_I2C     3

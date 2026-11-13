@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "motores.h"
 #include "pines.h"
+#include "settings.h"
 
 void init_motors() {
     pinMode(MOTORR_IN1_PIN, OUTPUT);
@@ -14,6 +15,9 @@ void init_motors() {
 }
 
 void motor_move(int motor, int speed) {
+  int trim = (motor == 0) ? settings.trimLeft : settings.trimRight;
+  speed = speed * (100 + trim) / 100;
+
   int pinIn1, pinIn2, pinPwm;
   if (motor == 0) {
     pinIn1 = MOTORL_IN1_PIN;

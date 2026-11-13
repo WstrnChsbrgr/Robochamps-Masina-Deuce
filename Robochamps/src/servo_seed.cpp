@@ -2,19 +2,19 @@
 #include <ESP32Servo.h>
 #include "servo_seed.h"
 #include "pines.h"
+#include "settings.h"
 
-const int ANGLE_OPEN  = 90;
-const int ANGLE_CLOSE = 20;
+
 Servo gripper;    
 void init_gripper() {
     gripper.attach(SERVO_PIN, 500, 2500);
-    gripper.write(ANGLE_OPEN);
+    gripper.write(settings.angleOpen);
 }
 
 void grab_seed() {
-  gripper.write(ANGLE_CLOSE);
+  gripper.write(settings.angleClose);
 }
 
 void release_seed() {
-  gripper.write(ANGLE_OPEN);
+  gripper.write(settings.angleOpen);
 }

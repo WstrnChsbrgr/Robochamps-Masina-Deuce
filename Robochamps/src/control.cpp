@@ -6,6 +6,7 @@
 #include "motores.h"
 #include "servo_seed.h"
 #include "color.h"
+#include "settings.h"
 
 WebServer servidor(80);
 
@@ -56,8 +57,6 @@ document.getElementById('s').addEventListener('pointerdown', () => send('/stop')
 </script></body></html>
 )rawliteral";
 
-const int SPEED_DRIVE = 100;
-const int SPEED_TURN  = 100;
 const unsigned long WATCHDOG_MS = 300;
 
 unsigned long lastCommand = 0;
@@ -69,25 +68,25 @@ void sendOk() {
 }
 
 void goForward() {
-  forward(SPEED_DRIVE);
+  forward(settings.speedDrive);
   lastCommand = millis(); moving = true;
   sendOk();
 }
 
 void goBack() {
-  forward(-SPEED_DRIVE);
+  forward(-settings.speedDrive);
   lastCommand = millis(); moving = true;
   sendOk();
 }
 
 void goLeft() {
-  turn(-SPEED_TURN);
+  turn(-settings.speedTurn);
   lastCommand = millis(); moving = true;
   sendOk();
 }
 
 void goRight() {
-  turn(SPEED_TURN);
+  turn(settings.speedTurn);
   lastCommand = millis(); moving = true;
   sendOk();
 }
@@ -108,14 +107,15 @@ void doRelease() {
   sendOk();
 }
 
-void doCalibrate(int id) {
-  int id = server.arg("id").toInt();
+void doCalibrate() {
+  int id = servidor.arg("id").toInt();
   if (id < 0 || id > 4) {
-    calibrate_color(id);
-    sendOk();
+    servidor.send(400, "text/plain", "bad id");
+    return;
   }
+  calibrate_color(id);
+  sendOk();
 }
-
 void showpage() {
   servidor.send(200, "text/html", PAGINA);
 }
