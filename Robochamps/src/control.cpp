@@ -77,6 +77,29 @@ document.getElementById('rd').addEventListener('click',()=>
   fetch('/color').then(r=>r.text()).then(t=>{document.getElementById('color').textContent='R,G,B,color = '+t;}));
 hold('f','/forward'); hold('l','/left'); hold('r','/right'); hold('b','/back');
 document.getElementById('s').addEventListener('pointerdown', () => send('/stop'));
+let lastCmd = '', lastSent = 0, padA = false, padB = false;
+setInterval(() => {
+  const gp = [...navigator.getGamepads()].find(g => g);
+  if (!gp) return;
+  const x = gp.axes[0], y = gp.axes[1];
+  let cmd = '';
+  if (y < -0.5) cmd = '/forward';
+  else if (y > 0.5) cmd = '/back';
+  else if (x < -0.5) cmd = '/left';
+  else if (x > 0.5) cmd = '/right';
+  const now = Date.now();
+  if (cmd) {
+    if (cmd !== lastCmd || now - lastSent > 100) { send(cmd); lastSent = now; }
+  } else if (lastCmd) {
+    send('/stop');
+  }
+  lastCmd = cmd;
+  const a = gp.buttons[0].pressed, b = gp.buttons[1].pressed;
+  if (a && !padA) send('/grab');
+  if (b && !padB) send('/release');
+  padA = a; padB = b;
+  if (gp.buttons[3] && gp.buttons[3].pressed) send('/stop');
+}, 50);
 </script></body></html>
 )rawliteral";
 

@@ -18,6 +18,7 @@ void color_init() {
   pinMode(OUT_PIN, INPUT);
   digitalWrite(S0_PIN, HIGH);
   digitalWrite(S1_PIN, LOW);
+  color_load();
 }
 
 int Channel_read(int s2, int s3) {
