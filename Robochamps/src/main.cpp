@@ -12,14 +12,16 @@
 #define MODE_MOTORS  4
 #define MODE_SERVO   5
 #define MODE_DRIVE   6
-#define TEST_MODE MODE_I2C
+#define TEST_MODE MODE_DRIVE
 int channel_red, channel_green, channel_blue;
 
 int contador = 0;
 
 void setup() {
   Serial.begin(115200);
-  delay(4000);
+    #if TEST_MODE != MODE_DRIVE
+    delay(4000);
+  #endif  
   #if TEST_MODE == MODE_I2C
     scan_i2c();
   #endif

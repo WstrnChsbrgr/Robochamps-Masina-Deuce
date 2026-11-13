@@ -16,6 +16,7 @@ void show_color(int color) {
     digitalWrite(LED_R_PIN, LOW);
     digitalWrite(LED_G_PIN, LOW);
     digitalWrite(LED_B_PIN, LOW);
+    digitalWrite(LED_Y_PIN, LOW);
     switch (color) {
       case COLOR_RED:
         digitalWrite(LED_R_PIN, HIGH);
@@ -27,8 +28,7 @@ void show_color(int color) {
         digitalWrite(LED_B_PIN, HIGH);
         break;
       case COLOR_YELLOW:
-        digitalWrite(LED_R_PIN, HIGH);
-        digitalWrite(LED_G_PIN, HIGH);
+        digitalWrite(LED_Y_PIN, HIGH);
         break;
       case COLOR_NONE:
              break;
@@ -39,6 +39,7 @@ void init_indicador() {
   pinMode(LED_R_PIN, OUTPUT);
   pinMode(LED_G_PIN, OUTPUT);
   pinMode(LED_B_PIN, OUTPUT);
+  pinMode(LED_Y_PIN, OUTPUT);
   show_color(COLOR_NONE);
 }
 

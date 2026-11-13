@@ -5,6 +5,7 @@
 #include "pines.h"
 #include "motores.h"
 #include "servo_seed.h"
+#include "color.h"
 
 WebServer servidor(80);
 
@@ -24,6 +25,9 @@ const char PAGINA[] = R"rawliteral(
 <button id="b">Back</button><br>
 <button id="s">STOP</button>
 <button id="g">Grab</button><button id="o">Release</button>
+<br>
+<button id="c0">Floor</button><button id="c1">Red</button><button id="c2">Green</button>
+<button id="c3">Blue</button><button id="c4">Yellow</button>
 <script>
 let timer = null;
 function send(path){ fetch(path).catch(()=>{}); }
@@ -42,6 +46,11 @@ function hold(id, path){
 }
 document.getElementById('g').addEventListener('pointerdown', () => send('/grab'));
 document.getElementById('o').addEventListener('pointerdown', () => send('/release'));
+document.getElementById('c0').addEventListener('pointerdown', () => send('/cal?c=0'));
+document.getElementById('c1').addEventListener('pointerdown', () => send('/cal?c=1'));
+document.getElementById('c2').addEventListener('pointerdown', () => send('/cal?c=2'));
+document.getElementById('c3').addEventListener('pointerdown', () => send('/cal?c=3'));
+document.getElementById('c4').addEventListener('pointerdown', () => send('/cal?c=4'));
 hold('f','/forward'); hold('l','/left'); hold('r','/right'); hold('b','/back');
 document.getElementById('s').addEventListener('pointerdown', () => send('/stop'));
 </script></body></html>
@@ -99,6 +108,14 @@ void doRelease() {
   sendOk();
 }
 
+void doCalibrate(int id) {
+  int id = server.arg("id").toInt();
+  if (id < 0 || id > 4) {
+    calibrate_color(id);
+    sendOk();
+  }
+}
+
 void showpage() {
   servidor.send(200, "text/html", PAGINA);
 }
@@ -126,6 +143,7 @@ void init_controller() {
     servidor.on("/stop", doStop);
     servidor.on("/grab", doGrab);
     servidor.on("/release", doRelease);
+    servidor.on("/cal", doCalibrate);
     servidor.begin();
 }
 

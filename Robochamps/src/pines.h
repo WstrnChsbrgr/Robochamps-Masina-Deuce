@@ -19,3 +19,4 @@ const int SCL_PIN = 9;
 const int LED_R_PIN = 18;
 const int LED_G_PIN = 21;
 const int LED_B_PIN = 38;
+const int LED_Y_PIN = 47;
