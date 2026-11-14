@@ -98,7 +98,6 @@ void color_load() {
   }
   colorPrefs.end();
   update_max_distance();
-  color_init();
 }
 
 void read_rgb(int* r, int* g, int* b) {

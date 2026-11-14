@@ -13,7 +13,8 @@
 #define MODE_MOTORS  4
 #define MODE_SERVO   5
 #define MODE_DRIVE   6
-#define TEST_MODE MODE_DRIVE
+#define MODE_LED     7
+#define TEST_MODE MODE_WIFI
 int channel_red, channel_green, channel_blue;
 
 int contador = 0;
@@ -77,5 +78,15 @@ void loop() {
   #elif TEST_MODE == MODE_DRIVE
     attend_controller();
     update_indicador();
+  #elif TEST_MODE == MODE_I2C
+    test_mpu();
+    delay(300);
+  #elif TEST_MODE == MODE_LED
+    for (int c = 1; c <= 4; c++) {
+      show_color(c);
+      delay(700);
+    }
+    show_color(0);
+    delay(700);
   #endif
 }
