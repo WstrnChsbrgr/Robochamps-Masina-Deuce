@@ -5,6 +5,7 @@
 #include "control.h"
 #include "pines.h"
 
+int pendingColor = COLOR_NONE;
 const unsigned long DETECT_EVERY_MS = 300;
 const unsigned long HOLD_MS = 2500;
 
@@ -57,11 +58,12 @@ void update_indicador() {
     return;
   }
 
-  int c = detect_color();
+    int c = detect_color();
   lastDetect = millis();
-  if (c != COLOR_NONE) {
+  if (c != COLOR_NONE && c == pendingColor) {
     shownColor = c;
     shownAt = millis();
     show_color(c);
   }
+  pendingColor = c;
 }
