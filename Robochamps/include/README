@@ -1,37 +1,45 @@
+# Masina Deuce — RoboChamp 2026 (Avanzados)
 
-This directory is intended for project header files.
+Robot teleoperado por WiFi para la misión "Invernadero Marciano". Microcontrolador ESP32-S3.
 
-A header file is a file containing C declarations and macro definitions
-to be shared between several project source files. You request the use of a
-header file in your project source file (C, C++, etc) located in `src` folder
-by including it, with the C preprocessing directive `#include'.
+## Hardware
+- ESP32-S3 DevKitC-1
+- Driver de motores TB6612 con 2 motores DC de 6 V
+- Servo SG90 (pinza para las semillas)
+- Sensor de color TCS3200
+- Giroscopio MPU-6050
+- 4 LEDs (rojo, verde, azul, amarillo) como indicador de color
+- Alimentación: un solo riel de 5 V con fusible, interruptor principal y capacitores
 
-```src/main.c
+## Pines (`src/pines.h`)
+| Pieza | Pines |
+|---|---|
+| Motor derecho | IN1 11, IN2 12, PWM 17 |
+| Motor izquierdo | IN1 14, IN2 15, PWM 16 |
+| Driver STBY | 13 |
+| Servo | 1 |
+| Sensor de color | S0 4, S1 5, S2 6, S3 7, OUT 10 |
+| Giroscopio | SDA 8, SCL 9 |
+| LEDs | rojo 18, verde 21, azul 38, amarillo 47 |
 
-#include "header.h"
+## Archivos (`src/`)
+- `main.cpp`: elige con `TEST_MODE` qué se ejecuta (pruebas por pieza o el firmware de competencia, `MODE_DRIVE`).
+- `pines.h`: todos los pines en un solo lugar.
+- `motores.cpp`: mueve cada motor (dirección + velocidad PWM) y aplica el ajuste (trim).
+- `control.cpp`: punto de acceso WiFi, página web de control, y watchdog de 0.3 s que detiene el robot si dejan de llegar comandos.
+- `color.cpp`: lee el sensor, compara con 5 colores calibrados (piso, rojo, verde, azul, amarillo) y elige el más cercano.
+- `indicador.cpp`: enciende el LED del color detectado, de forma automática, sin intervención del conductor.
+- `servo_seed.cpp`: abre y cierra la pinza.
+- `settings.cpp`: guarda velocidades, trim y ángulos de la pinza en la memoria flash.
+- `scanner.cpp`: pruebas del bus I2C y del giroscopio.
 
-int main (void)
-{
- ...
-}
-```
+## Cómo se usa
+1. Conectarse a la red `MasinaDeuce`.
+2. `192.168.4.1` : control de manejo (botones o control de consola emparejado al teléfono).
+3. `192.168.4.1/tune` : calibración de colores y ajustes (solo en la fase de preparación).
 
-Including a header file produces the same results as copying the header file
-into each source file that needs it. Such copying would be time-consuming
-and error-prone. With a header file, the related declarations appear
-in only one place. If they need to be changed, they can be changed in one
-place, and programs that include the header file will automatically use the
-new version when next recompiled. The header file eliminates the labor of
-finding and changing all the copies as well as the risk that a failure to
-find one copy will result in inconsistencies within a program.
+## Bibliotecas
+ESP32 Arduino core (WiFi, WebServer, Preferences, Wire).
 
-In C, the convention is to give header files names that end with `.h'.
-
-Read more about using header files in official GCC documentation:
-
-* Include Syntax
-* Include Operation
-* Once-Only Headers
-* Computed Includes
-
-https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
+## Uso de IA
+Se utilizó un asistente de IA (Claude, de Anthropic) como tutor durante el desarrollo: explicó conceptos, propuso fragmentos de código y ayudó a encontrar errores. El integrante de programación escribió, integró, probó y puede explicar cada archivo.

@@ -12,6 +12,7 @@ WebServer servidor(80);
 
 const char* NOMBRE_RED = "MasinaDeuce";        
 const char* CLAVE_RED  = "Autode12";
+const int WIFI_CHANNEL = 11;
 
 const char PAGINA[] = R"rawliteral(
 <!DOCTYPE html><html><head>
@@ -26,14 +27,6 @@ const char PAGINA[] = R"rawliteral(
 <button id="b">Back</button><br>
 <button id="s">STOP</button>
 <button id="g">Grab</button><button id="o">Release</button>
-<br>
-<button id="c0">Floor</button><button id="c1">Red</button><button id="c2">Green</button>
-<button id="c3">Blue</button><button id="c4">Yellow</button>
-<hr>
-<div id="panel"></div>
-<button id="save">Save settings</button>
-<button id="rd">Read color</button>
-<pre id="color"></pre>
 <script>
 let timer = null;
 function send(path){ fetch(path).catch(()=>{}); }
@@ -52,29 +45,6 @@ function hold(id, path){
 }
 document.getElementById('g').addEventListener('pointerdown', () => send('/grab'));
 document.getElementById('o').addEventListener('pointerdown', () => send('/release'));
-function cal(i){
-  fetch('/cal?id='+i).then(r=>{
-    document.getElementById('color').textContent = r.ok ? 'calibrated '+i : 'read FAILED, retry';
-  });
-}
-for (let i=0;i<5;i++) document.getElementById('c'+i).addEventListener('pointerdown', ()=>cal(i));
-
-const sliders=[['drive','Speed',0,255],['turn','Turn speed',0,255],['trimL','Trim left',-30,30],
-  ['trimR','Trim right',-30,30],['open','Gripper open',0,180],['close','Gripper close',0,180]];
-fetch('/status').then(r=>r.text()).then(t=>{
-  const v=t.split(',');
-  sliders.forEach(([k,label,min,max],i)=>{
-    const d=document.createElement('div');
-    d.innerHTML=label+': <span id="v_'+k+'">'+v[i]+'</span><br><input type="range" min="'+min+'" max="'+max+'" value="'+v[i]+'" style="width:80vw">';
-    const inp=d.querySelector('input');
-    inp.addEventListener('input',e=>{document.getElementById('v_'+k).textContent=e.target.value;});
-    inp.addEventListener('change',e=>send('/set?k='+k+'&v='+e.target.value));
-    document.getElementById('panel').appendChild(d);
-  });
-});
-document.getElementById('save').addEventListener('click',()=>send('/save'));
-document.getElementById('rd').addEventListener('click',()=>
-  fetch('/color').then(r=>r.text()).then(t=>{document.getElementById('color').textContent='R,G,B,color = '+t;}));
 hold('f','/forward'); hold('l','/left'); hold('r','/right'); hold('b','/back');
 document.getElementById('s').addEventListener('pointerdown', () => send('/stop'));
 let lastCmd = '', lastSent = 0, padA = false, padB = false;
@@ -100,6 +70,48 @@ setInterval(() => {
   padA = a; padB = b;
   if (gp.buttons[3] && gp.buttons[3].pressed) send('/stop');
 }, 50);
+</script></body></html>
+)rawliteral";
+
+const char PAGINA_TUNE[] = R"rawliteral(
+<!DOCTYPE html><html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body{font-family:sans-serif;text-align:center}
+  button{width:40vw;height:12vh;font-size:1.6em;margin:6px}
+</style></head><body>
+<h1>Tuning</h1>
+<button id="c0">Floor</button><button id="c1">Red</button><button id="c2">Green</button>
+<button id="c3">Blue</button><button id="c4">Yellow</button>
+<hr>
+<div id="panel"></div>
+<button id="save">Save settings</button>
+<button id="rd">Read color</button>
+<pre id="color"></pre>
+<script>
+function send(path){ fetch(path).catch(()=>{}); }
+function cal(i){
+  fetch('/cal?id='+i).then(r=>{
+    document.getElementById('color').textContent = r.ok ? 'calibrated '+i : 'read FAILED, retry';
+  });
+}
+for (let i=0;i<5;i++) document.getElementById('c'+i).addEventListener('click', ()=>cal(i));
+const sliders=[['drive','Speed',0,255],['turn','Turn speed',0,255],['trimL','Trim left',-30,30],
+  ['trimR','Trim right',-30,30],['open','Gripper open',0,180],['close','Gripper close',0,180]];
+fetch('/status').then(r=>r.text()).then(t=>{
+  const v=t.split(',');
+  sliders.forEach(([k,label,min,max],i)=>{
+    const d=document.createElement('div');
+    d.innerHTML=label+': <span id="v_'+k+'">'+v[i]+'</span><br><input type="range" min="'+min+'" max="'+max+'" value="'+v[i]+'" style="width:80vw">';
+    const inp=d.querySelector('input');
+    inp.addEventListener('input',e=>{document.getElementById('v_'+k).textContent=e.target.value;});
+    inp.addEventListener('change',e=>send('/set?k='+k+'&v='+e.target.value));
+    document.getElementById('panel').appendChild(d);
+  });
+});
+document.getElementById('save').addEventListener('click',()=>send('/save'));
+document.getElementById('rd').addEventListener('click',()=>
+  fetch('/color').then(r=>r.text()).then(t=>{document.getElementById('color').textContent='R,G,B,color = '+t;}));
 </script></body></html>
 )rawliteral";
 
@@ -195,6 +207,10 @@ void showpage() {
   servidor.send(200, "text/html", PAGINA);
 }
 
+void showTune() {
+  servidor.send(200, "text/html", PAGINA_TUNE);
+}
+
 void LedOn() {
   digitalWrite(LED_PIN, HIGH);
   showpage();
@@ -208,7 +224,8 @@ void LedOff() {
 
 void init_controller() {
     pinMode(LED_PIN, OUTPUT);
-    WiFi.softAP(NOMBRE_RED, CLAVE_RED);
+    WiFi.softAP(NOMBRE_RED, CLAVE_RED, WIFI_CHANNEL, 0, 2);
+    WiFi.setSleep(false);
     servidor.on("/", showpage);
     Serial.println(WiFi.softAPIP());
     servidor.on("/forward", goForward);
@@ -223,6 +240,7 @@ void init_controller() {
     servidor.on("/save", doSave);
     servidor.on("/status", doStatus);
     servidor.on("/color", doColor);
+    servidor.on("/tune", showTune);
     servidor.begin();
 }
 
