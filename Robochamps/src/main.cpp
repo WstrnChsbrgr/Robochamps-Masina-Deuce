@@ -14,7 +14,7 @@
 #define MODE_SERVO   5
 #define MODE_DRIVE   6
 #define MODE_LED     7
-#define TEST_MODE MODE_WIFI
+#define TEST_MODE MODE_DRIVE
 int channel_red, channel_green, channel_blue;
 
 int contador = 0;

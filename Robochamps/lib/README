@@ -1,46 +1,45 @@
+# Masina Deuce — RoboChamp 2026 (Avanzados)
 
-This directory is intended for project specific (private) libraries.
-PlatformIO will compile them to static libraries and link into the executable file.
+Robot teleoperado por WiFi para la misión "Invernadero Marciano". Microcontrolador ESP32-S3.
 
-The source code of each library should be placed in a separate directory
-("lib/your_library_name/[Code]").
+## Hardware
+- ESP32-S3 DevKitC-1
+- Driver de motores TB6612 con 2 motores DC de 6 V
+- Servo SG90 (pinza para las semillas)
+- Sensor de color TCS3200
+- Giroscopio MPU-6050
+- 4 LEDs (rojo, verde, azul, amarillo) como indicador de color
+- Alimentación: un solo riel de 5 V con fusible, interruptor principal y capacitores
 
-For example, see the structure of the following example libraries `Foo` and `Bar`:
+## Pines (`src/pines.h`)
+| Pieza | Pines |
+|---|---|
+| Motor derecho | IN1 11, IN2 12, PWM 17 |
+| Motor izquierdo | IN1 14, IN2 15, PWM 16 |
+| Driver STBY | 13 |
+| Servo | 1 |
+| Sensor de color | S0 4, S1 5, S2 6, S3 7, OUT 10 |
+| Giroscopio | SDA 8, SCL 9 |
+| LEDs | rojo 18, verde 21, azul 38, amarillo 47 |
 
-|--lib
-|  |
-|  |--Bar
-|  |  |--docs
-|  |  |--examples
-|  |  |--src
-|  |     |- Bar.c
-|  |     |- Bar.h
-|  |  |- library.json (optional. for custom build options, etc) https://docs.platformio.org/page/librarymanager/config.html
-|  |
-|  |--Foo
-|  |  |- Foo.c
-|  |  |- Foo.h
-|  |
-|  |- README --> THIS FILE
-|
-|- platformio.ini
-|--src
-   |- main.c
+## Archivos (`src/`)
+- `main.cpp`: elige con `TEST_MODE` qué se ejecuta (pruebas por pieza o el firmware de competencia, `MODE_DRIVE`).
+- `pines.h`: todos los pines en un solo lugar.
+- `motores.cpp`: mueve cada motor (dirección + velocidad PWM) y aplica el ajuste (trim).
+- `control.cpp`: punto de acceso WiFi, página web de control, y watchdog de 0.3 s que detiene el robot si dejan de llegar comandos.
+- `color.cpp`: lee el sensor, compara con 5 colores calibrados (piso, rojo, verde, azul, amarillo) y elige el más cercano.
+- `indicador.cpp`: enciende el LED del color detectado, de forma automática, sin intervención del conductor.
+- `servo_seed.cpp`: abre y cierra la pinza.
+- `settings.cpp`: guarda velocidades, trim y ángulos de la pinza en la memoria flash.
+- `scanner.cpp`: pruebas del bus I2C y del giroscopio.
 
-Example contents of `src/main.c` using Foo and Bar:
-```
-#include <Foo.h>
-#include <Bar.h>
+## Cómo se usa
+1. Conectarse a la red `MasinaDeuce`.
+2. `192.168.4.1` : control de manejo (botones o control de consola emparejado al teléfono).
+3. `192.168.4.1/tune` : calibración de colores y ajustes (solo en la fase de preparación).
 
-int main (void)
-{
-  ...
-}
+## Bibliotecas
+ESP32 Arduino core (WiFi, WebServer, Preferences, Wire).
 
-```
-
-The PlatformIO Library Dependency Finder will find automatically dependent
-libraries by scanning project source files.
-
-More information about PlatformIO Library Dependency Finder
-- https://docs.platformio.org/page/librarymanager/ldf.html
+## Uso de IA
+Se utilizó un asistente de IA (Claude, de Anthropic) como tutor durante el desarrollo: explicó conceptos, propuso fragmentos de código y ayudó a encontrar errores. El integrante de programación escribió, integró, probó y puede explicar cada archivo.
