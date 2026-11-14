@@ -200,7 +200,7 @@ void doStatus() {
 void doColor() {
   int r, g, b;
   read_rgb(&r, &g, &b);
-  servidor.send(200, "text/plain", String(r) + "," + g + "," + b + "," + detect_color());
+  servidor.send(200, "text/plain", String(r) + "," + g + "," + b + "," + detect_color() + "," + (is_calibrated() ? "calibrated" : "NOT calibrated"));
 }
 
 void showpage() {

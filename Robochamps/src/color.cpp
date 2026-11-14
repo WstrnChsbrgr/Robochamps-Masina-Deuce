@@ -9,6 +9,7 @@ ColorRef refs[5];
 bool filled[5] = { false, false, false, false, false };
 int maxDistance = 0;
 bool calibrated = false;
+bool is_calibrated() { return calibrated; }
 
 void color_init() {
   pinMode(S0_PIN, OUTPUT);
